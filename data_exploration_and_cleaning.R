@@ -1,7 +1,7 @@
 rm(list=ls())
 library(dplyr)
 library(forcats)
-data <- read.csv('csv files/Closed_Discrimination_Complaint_Cases_in_Iowa.csv', stringsAsFactors = TRUE)
+data <- read.csv('Closed_Discrimination_Complaint_Cases_in_Iowa.csv', stringsAsFactors = TRUE)
 
 #explore data
 #View(data)
@@ -124,4 +124,6 @@ data <- data %>%
   filter(!is.na(Processing.Days))
 #summary(data)
 
+#write to new RDS to be able to import into modeling file
+saveRDS(data, file = "clean_data.rds")
 
