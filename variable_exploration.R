@@ -146,3 +146,115 @@ plot3 <- demo_data %>%
   theme_clean
 print(plot3)
 
+
+# --- 6. NEW PLOT 4: Outcome Rates by Processor ---
+#
+# This plot answers the client question:
+# "Does it matter which agency handles my complaint?"
+#
+plot4 <- model_data %>%
+  ggplot(aes(x = fct_reorder(Processor, Outcome == "Favorable",
+                             .fun = mean, .desc = TRUE),
+             fill = Outcome)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  scale_fill_manual(values = outcome_colors) +
+  labs(
+    title = "Favorable Outcome Rates Vary by Processing Agency",
+    subtitle = "Proportion of Favorable vs. Unfavorable outcomes, sorted by Favorable rate",
+    x = "Processing Agency",
+    y = "Proportion",
+    fill = "Case Outcome",
+    caption = "Data: Iowa Civil Rights Commission"
+  ) +
+  theme_clean
+
+# To see the plot:
+ print(plot4)
+
+
+# --- 7. NEW PLOT 5: Outcome Rates by Race.Type ---
+#
+# This leverages our data cleaning of the 'Type' columns.
+# It answers: "For cases where Race *is* a basis,
+# do outcomes differ by the specific race type documented?"
+#
+# --- !!! IMPORTANT !!! ---
+# You must run this chunk below to create 'race_type_data'
+# BEFORE you can run the 'plot5' chunk.
+#
+race_type_data <- model_data %>%
+  filter(Race == "Yes") # Filter to ONLY cases where Race was a basis
+
+#
+# Now that 'race_type_data' exists, you can run this chunk to create plot5
+#
+plot5 <- race_type_data %>%
+  ggplot(aes(x = fct_reorder(Race.Type, Outcome == "Favorable",
+                             .fun = mean, .desc = TRUE),
+             fill = Outcome)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  scale_fill_manual(values = outcome_colors) +
+  labs(
+    title = "Favorable Outcome Rates by Race Type",
+    subtitle = "Proportion of outcomes for cases where Race was a cited basis, sorted by Favorable rate",
+    x = "Race Type Documented",
+    y = "Proportion",
+    fill = "Case Outcome",
+    caption = "Data: Iowa Civil Rights Commission"
+  ) +
+  theme_clean +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Add angle for readability
+
+# To see the plot:
+ print(plot5)
+
+
+# --- 8. NEW PLOT 6: Multivariate Interaction Plot ---
+#
+# This is a "stupendous" plot for your client.
+# It answers: "Is filing for 'Retaliation' *with* 'Race'
+# different than filing for 'Race' alone?"
+#
+# --- !!! IMPORTANT !!! ---
+# You must run this chunk below to create 'interaction_data'
+# BEFORE you can run the 'plot6' chunk.
+#
+interaction_data <- model_data %>%
+  # Focus only on cases where one or both of these were a basis
+  filter(Race == "Yes" | Retaliation == "Yes") %>%
+  mutate(
+    Complaint.Profile = case_when(
+      Race == "Yes" & Retaliation == "Yes" ~ "Race + Retaliation",
+      Race == "Yes" & Retaliation == "No"  ~ "Race Only",
+      Race == "No"  & Retaliation == "Yes" ~ "Retaliation Only"
+    )
+  ) %>%
+  # Remove any stray cases (shouldn't be any, but good practice)
+  filter(!is.na(Complaint.Profile))
+
+#
+# Now that 'interaction_data' exists, you can run this chunk to create plot6
+#
+plot6 <- interaction_data %>%
+  ggplot(aes(x = fct_reorder(Complaint.Profile, Outcome == "Favorable",
+                             .fun = mean, .desc = TRUE),
+             fill = Outcome)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  scale_fill_manual(values = outcome_colors) +
+  labs(
+    title = "Favorable Outcome Rates by Complaint Profile",
+    subtitle = "Investigating the interaction between Race and Retaliation claims",
+    x = "Complaint Profile",
+    y = "Proportion",
+    fill = "Case Outcome",
+    caption = "Data: Iowa Civil Rights Commission"
+  ) +
+  theme_clean
+
+# To see the plot:
+ print(plot6)
+
+
