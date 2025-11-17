@@ -9,13 +9,16 @@ library(forcats)
 model_data <- readRDS("clean_data.rds")
 #View(model_data)
 
+
+# Visualizing Y variable (Outcome) over Processing.Days 
 ggplot(data = model_data) + 
   geom_histogram(aes(x = Processing.Days, fill = Outcome), position ='fill', binwidth = 75) +
   labs(x = "Processing Days", y = "Proportion") + 
-  ggtitle(" Case Outcomes over Time") + 
+  ggtitle("Case Outcomes over Processing Time") + 
   scale_fill_grey("Case \nOutcome") + 
   theme_bw()
 
+<<<<<<< HEAD
 # --- 2. Define a Professional Theme ---
 #
 # We can define a theme to reuse for all our plots
@@ -126,3 +129,21 @@ plot3 <- demo_data %>%
   ) +
   theme_clean
 print(plot3)
+=======
+# Visualizing Y variable (Outcome) over Fiscal.Year
+ggplot(data = model_data) + 
+  geom_histogram(aes(x = Fiscal.Year, fill = Outcome), position ='fill', binwidth = 1) +
+  labs(x = "Fiscal Year", y = "Proportion") + 
+  ggtitle("Case Outcomes over Time (Fiscal Year)") + 
+  scale_fill_grey("Case \nOutcome") + 
+  theme_bw()
+
+# Visualizing Y variable (Outcome) over Not.Timely cases 
+ggplot(data = model_data) + 
+  geom_bar(aes(x = Not.Timely, fill = Outcome), position ='fill', binwidth = 75) +
+  labs(x = "Timely Case", y = "Proportion", caption = "Note: Not timely cases indicate the case was not recieved within 300 days of the incident") + 
+  ggtitle("Case Outcomes over Timely Cases") + 
+  scale_fill_grey("Case \nOutcome") + 
+  theme_bw() 
+
+>>>>>>> 7d871c4b39aa33d133c41a50d044dce58dfa9ce8
