@@ -120,8 +120,10 @@ data <- data %>%
 #View(na_processing_rows)
 
 #these 5 have a Date.Closed, but no Date.Opened. Since there are only 5, we are just going to drop them.
-model_data <- data %>%
+data <- data %>%
   filter(!is.na(Processing.Days))
 #summary(data)
 
+#write to new RDS to be able to import into modeling file
+saveRDS(data, file = "clean_data.rds")
 
