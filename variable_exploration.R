@@ -10,7 +10,15 @@ View(model_data)
 ggplot(data = model_data) + 
   geom_histogram(aes(x = Processing.Days, fill = Outcome), position ='fill', binwidth = 75) +
   labs(x = "Processing Days", y = "Proportion") + 
-  ggtitle("Case Outcomes over Time") + 
+  ggtitle("Case Outcomes over Processing Time") + 
+  scale_fill_grey("Case \nOutcome") + 
+  theme_bw()
+
+# Visualizing Y variable (Outcome) over Fiscal.Year
+ggplot(data = model_data) + 
+  geom_histogram(aes(x = Fiscal.Year, fill = Outcome), position ='fill', binwidth = 1) +
+  labs(x = "Fiscal Year", y = "Proportion") + 
+  ggtitle("Case Outcomes over Time (Fiscal Year)") + 
   scale_fill_grey("Case \nOutcome") + 
   theme_bw()
 
@@ -21,4 +29,4 @@ ggplot(data = model_data) +
   ggtitle("Case Outcomes over Timely Cases") + 
   scale_fill_grey("Case \nOutcome") + 
   theme_bw() 
-  
+
