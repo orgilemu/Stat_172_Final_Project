@@ -3,7 +3,7 @@ library(rpart) # for classification trees
 library(rpart.plot) # to get attractive plots of trees
 
 
-#read in clean data RDS that we created in the cleaning file
+# Read in clean data RDS that we created in the cleaning file
 model_data <- readRDS("clean_data.rds")
 View(model_data)
 
@@ -56,10 +56,48 @@ printcp(tree) # sub trees
 which.min(tree$cptable[,"xerror"]) # optimal split based on min xerror
 # The smallest xerror is at 20 splits with xerror of 0.82043 
 
-# find optimal CP using minimum xerror (automate)
+# Find optimal CP using minimum xerror (automate)
 optimalCP <- tree$cptable[which.min(tree$cptable[,"xerror"]) , "CP"] 
 
 tree2 <- prune(tree, cp = optimalCP) # automatized CP
 rpart.plot(tree2) # plot tree2
 tree2
 # tree2 is our tuned tree - it is the final tree we will use for predicting 
+
+
+# ------- MODEL VALIDATION ------
+# Need to make a column of predictions 
+# Need to do that on the TESTING data 
+
+test.df$result_pred <- predict(tree2, test.df, type = "class")
+
+# Make a confusion matrix 
+table(test.df$result_pred, test.df$Outcome)
+
+pi_hat <- predict(tree2, test.df, type = "prob")[ , "Favorable"]
+
+# "Favorable" is out positive event 
+rocCurve <- roc(response = test.df$Outcome, #supply our truth (in test set)
+                predictor = pi_hat, # supply predicted PROBABILITIES of positive case
+                levels = c("Unfavorable", "Favorable")) # (negative, positive)
+
+# Plot ROC curve
+plot(rocCurve, print.thres = TRUE, print.auc = TRUE)
+
+# Interpretations: 
+
+# If we set pi* = 0.131, we can achieve specificity of 0.810
+# and sensitivity of 0.654
+
+# That is, we'll predict an unfavorable outcome 81.0% of the time when 
+# an unfavorable outcome actually happens.  
+
+# That is, we'll predict a favorable outcome 65.4% of the time when 
+# a favorable outcome actually happens.   
+# Area under the curve is 0.784
+
+
+# Obtain predictions consistent with the above promises: 
+pi_star <- coords(rocCurve, "best", ret = "threshold")[1]
+# Pi* is equal to 0.1306307
+test.df$result_pred <- as.factor(ifelse(pi_hat > pi_star, "Unfavorable", "Favorable"))
