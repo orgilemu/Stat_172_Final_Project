@@ -33,9 +33,33 @@ tree <- rpart(Outcome ~ Fiscal.Year + Not.Timely + Not.Jurisdictional + Processo
                 Sex.Type + Pregnancy + National.Origin.Type + Familial.Status + Marital.Status + Religion.Type +
                 Creed + Color + Sexual.Orientation + Gender.Identity + Retaliation + Processing.Days, 
               data = train.df, 
-              method = 'class')
+              method = 'class') # creating the tree
 
 rpart.plot(tree) # plotting the tree
-ctree # textual output for large data sets 
+tree # textual output for large data sets 
 
 ### ----- TUNNING THE TREE ------
+
+printcp(tree) # sub tree splits 
+# The smallest x-error is in the biggest tree (last row) tried, 0.90261
+# This indicates R did not grow the tree to it's fullest extent 
+set.seed(2025)
+tree <- rpart(Outcome ~ Fiscal.Year + Not.Timely + Not.Jurisdictional + Processor + Housing + Employment + 
+                Public.Accommodations + Education + Credit + Race.Type + Disability + Age + 
+                Sex.Type + Pregnancy + National.Origin.Type + Familial.Status + Marital.Status + Religion.Type +
+                Creed + Color + Sexual.Orientation + Gender.Identity + Retaliation + Processing.Days, 
+              data = train.df, 
+              method = 'class', 
+              control = rpart.control(cp = 0.0001, minsplit = 1))
+rpart.plot(tree) # plot tree
+printcp(tree) # sub trees 
+which.min(tree$cptable[,"xerror"]) # optimal split based on min xerror
+# The smallest xerror is at 20 splits with xerror of 0.82043 
+
+# find optimal CP using minimum xerror (automate)
+optimalCP <- tree$cptable[which.min(tree$cptable[,"xerror"]) , "CP"] 
+
+tree2 <- prune(tree, cp = optimalCP) # automatized CP
+rpart.plot(tree2) # plot tree2
+tree2
+# tree2 is our tuned tree - it is the final tree we will use for predicting 
