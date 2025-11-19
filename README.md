@@ -1,6 +1,3 @@
-# Stat_172_Final_Project
-Discrimination Case
-
 ---
 title: "Analysis of Discrimination Complaint Cases in Iowa"
 authors: "Kendall Starcevich, Olivia Soppa, & Munkh-Orgil Tumurchudur"
