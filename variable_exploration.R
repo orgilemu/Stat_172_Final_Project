@@ -9,32 +9,6 @@ library(forcats)
 model_data <- readRDS("clean_data.rds")
 #View(model_data)
 
-
-# Visualizing Y variable (Outcome) over Processing.Days 
-ggplot(data = model_data) + 
-  geom_histogram(aes(x = Processing.Days, fill = Outcome), position ='fill', binwidth = 75) +
-  labs(x = "Processing Days", y = "Proportion") + 
-  ggtitle("Case Outcomes over Processing Time") + 
-  scale_fill_grey("Case \nOutcome") + 
-  theme_bw()
-
-# Visualizing Y variable (Outcome) over Fiscal.Year
-ggplot(data = model_data) + 
-  geom_histogram(aes(x = Fiscal.Year, fill = Outcome), position ='fill', binwidth = 1) +
-  labs(x = "Fiscal Year", y = "Proportion") + 
-  ggtitle("Case Outcomes over Time (Fiscal Year)") + 
-  scale_fill_grey("Case \nOutcome") + 
-  theme_bw()
-
-# Visualizing Y variable (Outcome) over Not.Timely cases 
-ggplot(data = model_data) + 
-  geom_bar(aes(x = Not.Timely, fill = Outcome), position ='fill', binwidth = 75) +
-  labs(x = "Timely Case", y = "Proportion", caption = "Note: Not timely cases indicate the case was not recieved within 300 days of the incident") + 
-  ggtitle("Case Outcomes over Timely Cases") + 
-  scale_fill_grey("Case \nOutcome") + 
-  theme_bw() 
-
-
 # --- 2. Define a Professional Theme ---
 #
 # We can define a theme to reuse for all our plots
@@ -49,9 +23,29 @@ theme_clean <- theme_minimal(base_size = 12) +
     legend.title = element_text(face = "bold")
   )
 
-# Define a color palette for our "Favorable" vs "Unfavorable"
-# This is colorblind-friendly and professional
-outcome_colors <- c("Favorable" = "#1F77B4", "Unfavorable" = "#D62728")
+# Visualizing Y variable (Outcome) over Processing.Days 
+ggplot(data = model_data) + 
+  geom_histogram(aes(x = Processing.Days, fill = Outcome), position ='fill', binwidth = 75) +
+  labs(x = "Processing Days", y = "Proportion") + 
+  ggtitle("Case Outcomes over Processing Time") + 
+  scale_fill_brewer("Case \nOutcome" , palette = "Paired") + 
+  theme_clean
+
+# Visualizing Y variable (Outcome) over Fiscal.Year
+ggplot(data = model_data) + 
+  geom_histogram(aes(x = Fiscal.Year, fill = Outcome), position ='fill', binwidth = 1) +
+  labs(x = "Fiscal Year", y = "Proportion") + 
+  ggtitle("Case Outcomes over Time (Fiscal Year)") + 
+  scale_fill_brewer("Case \nOutcome", palette = "Paired") + 
+  theme_clean
+
+# Visualizing Y variable (Outcome) over Not.Timely cases 
+ggplot(data = model_data) + 
+  geom_bar(aes(x = Not.Timely, fill = Outcome), position ='fill', binwidth = 75) +
+  labs(x = "Timely Case", y = "Proportion", caption = "Note: Not timely cases indicate the case was not recieved within 300 days of the incident") + 
+  ggtitle("Case Outcomes over Timely Cases") + 
+  scale_fill_brewer("Case \nOutcome", palette = "Paired") + 
+  theme_clean
 
 
 # --- `Processing.Days` by Outcome ---
@@ -64,7 +58,7 @@ plot1 <- model_data %>%
   filter(Processing.Days <= 730) %>% # Focus on cases <= 2 years
   ggplot(aes(x = Processing.Days, fill = Outcome)) +
   geom_density(alpha = 0.7) + # Use alpha for transparency
-  scale_fill_manual(values = outcome_colors) +
+  scale_fill_brewer("Case \nOutcome", palette = "Paired")+
   labs(
     title = "Favorable Outcomes Tend to Have Shorter Processing Times",
     subtitle = "Distribution of processing days for cases closed within 2 years",
@@ -104,7 +98,7 @@ plot2 <- basis_data %>%
   # `position = "fill"` creates the 100% stacked bar
   geom_bar(position = "fill") +
   scale_y_continuous(labels = scales::percent_format()) + # Show Y axis as %
-  scale_fill_manual(values = outcome_colors) +
+  scale_fill_brewer("Case \nOutcome", palette = "Paired") +
   labs(
     title = "Favorable Outcome Rates Vary by Complaint Basis",
     subtitle = "Proportion of Favorable vs. Unfavorable outcomes, sorted by Favorable rate",
@@ -134,7 +128,7 @@ plot3 <- demo_data %>%
              fill = Outcome)) +
   geom_bar(position = "fill") +
   scale_y_continuous(labels = scales::percent_format()) +
-  scale_fill_manual(values = outcome_colors) +
+  scale_fill_brewer("Case \nOutcome", palette = "Paired") +
   labs(
     title = "Favorable Outcome Rates by Demographic Basis",
     subtitle = "Proportion of Favorable vs. Unfavorable outcomes, sorted by Favorable rate",
@@ -158,7 +152,7 @@ plot4 <- model_data %>%
              fill = Outcome)) +
   geom_bar(position = "fill") +
   scale_y_continuous(labels = scales::percent_format()) +
-  scale_fill_manual(values = outcome_colors) +
+  scale_fill_brewer("Case \nOutcome", palette = "Paired") +
   labs(
     title = "Favorable Outcome Rates Vary by Processing Agency",
     subtitle = "Proportion of Favorable vs. Unfavorable outcomes, sorted by Favorable rate",
@@ -195,7 +189,7 @@ plot5 <- race_type_data %>%
              fill = Outcome)) +
   geom_bar(position = "fill") +
   scale_y_continuous(labels = scales::percent_format()) +
-  scale_fill_manual(values = outcome_colors) +
+  scale_fill_brewer("Case \nOutcome", palette = "Paired") +
   labs(
     title = "Favorable Outcome Rates by Race Type",
     subtitle = "Proportion of outcomes for cases where Race was a cited basis, sorted by Favorable rate",
@@ -243,7 +237,7 @@ plot6 <- interaction_data %>%
              fill = Outcome)) +
   geom_bar(position = "fill") +
   scale_y_continuous(labels = scales::percent_format()) +
-  scale_fill_manual(values = outcome_colors) +
+  scale_fill_brewer("Case \nOutcome", palette = "Paired") +
   labs(
     title = "Favorable Outcome Rates by Complaint Profile",
     subtitle = "Investigating the interaction between Race and Retaliation claims",
