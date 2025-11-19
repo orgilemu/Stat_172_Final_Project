@@ -1,2 +1,20 @@
 # Stat_172_Final_Project
 Discrimination Case
+
+---
+title: "Analysis of Discrimination Complaint Cases in Iowa"
+authors: "Kendall Starcevich, Olivia Soppa, & Munkh-Orgil Tumurchudur"
+date: "12/08/25"
+output: 
+---
+
+## Introduction
+
+## Requirements
+To install the required R packages, run the following code in R:
+
+## Data
+
+## Reproduce
+
+## References
