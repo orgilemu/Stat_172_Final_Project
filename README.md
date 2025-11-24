@@ -10,6 +10,12 @@ output:
 ## Requirements
 To install the required R packages, run the following code in R:
 
+```r
+install.packages(c("tidyverse","pROC", "glmnet", "lubridate", "dplyr",
+                   "forcats", "rpart", "rpart.plot", "ggplot2", "tidyr", "scales"))
+```
+
+
 ## Data
 
 ## Reproduce
