@@ -6,7 +6,7 @@ output:
 ---
 
 ## Introduction
-This repository contains the code and data required to reproduce the results found in "Closed Discrimination Complaint Cases in Iowa". ...
+This repository contains the code and data required to reproduce the results found in "Closed Discrimination Complaint Cases in Iowa". Our objective is to understand key factors of discrimination cases, and develop a predictive model to inform victims of the possibilities of winning their case by using...
 
 ## Requirements
 To install the required R packages, run the following code in R:
