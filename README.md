@@ -22,4 +22,4 @@ install.packages(c("tidyverse","pROC", "glmnet", "lubridate", "dplyr",
 ## Reproduce
 
 ## References
-Alatas,   V.,   Banerjee,   A.,   Hanna,   R.,   Olken,   B.,   and  Tobias,   J.  (2013).Targeting  the  poor:   Evidence  from  a  field  experiment  in  Indonesia.Harvard  Dataverse, https://catalog.data.gov/dataset/closed-discrimination-complaint-cases-in-iowa, V5
+State of Iowa, (2023). Closed Discrimination Complaint Cases in Iowa, https://catalog.data.gov/dataset/closed-discrimination-complaint-cases-in-iowa.
