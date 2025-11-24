@@ -6,6 +6,7 @@ output:
 ---
 
 ## Introduction
+This repository contains the code and data required to reproduce the results found in "Closed Discrimination Complaint Cases in Iowa". ...
 
 ## Requirements
 To install the required R packages, run the following code in R:
@@ -21,3 +22,4 @@ install.packages(c("tidyverse","pROC", "glmnet", "lubridate", "dplyr",
 ## Reproduce
 
 ## References
+Alatas,   V.,   Banerjee,   A.,   Hanna,   R.,   Olken,   B.,   and  Tobias,   J.  (2013).Targeting  the  poor:   Evidence  from  a  field  experiment  in  Indonesia.Harvard  Dataverse, https://catalog.data.gov/dataset/closed-discrimination-complaint-cases-in-iowa, V5
