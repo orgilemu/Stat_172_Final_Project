@@ -98,6 +98,6 @@ plot(rocCurve, print.thres = TRUE, print.auc = TRUE)
 
 
 # Obtain predictions consistent with the above promises: 
-pi_star <- coords(rocCurve, "best", ret = "threshold")[1]
+pi_star <- coords(rocCurve, "best", ret = "threshold")$threshold[1]
 # Pi* is equal to 0.1306307
-test.df$result_pred <- as.factor(ifelse(pi_hat > pi_star, "Unfavorable", "Favorable"))
+test.df$result_pred <- as.factor(ifelse(pi_hat > pi_star, "Favorable", "Unfavorable"))

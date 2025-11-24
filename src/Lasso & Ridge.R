@@ -10,7 +10,7 @@ source("src/data_exploration_and_cleaning.R")
 View(model_data)
 
 RNGkind(sample.kind = "default")
-set.seed(23591)
+set.seed(2025)
 
 model_data <- model_data %>% 
   mutate(Outcome_bin = ifelse(Outcome == "Favorable", 1, 0)
@@ -31,6 +31,7 @@ lr_mle <- glm(Outcome_bin ~ Fiscal.Year + Not.Timely + Not.Jurisdictional + Proc
 
 summary(lr_mle)
 
+#CHECK FOR COMPLETE SEPARATION
 
 lr_ml_coefs <- coef(lr_mle)
 
