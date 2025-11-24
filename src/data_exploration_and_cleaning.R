@@ -1,7 +1,7 @@
 rm(list=ls())
 library(dplyr)
 library(forcats)
-data <- read.csv('Closed_Discrimination_Complaint_Cases_in_Iowa.csv', stringsAsFactors = TRUE)
+data <- read.csv('raw/Closed_Discrimination_Complaint_Cases_in_Iowa.csv', stringsAsFactors = TRUE)
 
 #explore data
 #View(data)
