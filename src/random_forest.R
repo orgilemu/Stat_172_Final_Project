@@ -113,8 +113,6 @@ head(test.df)
 varImpPlot(final_forest, type = 1)
 model_data$Outcome_bin <-ifelse(model_data$Outcome == "Favorable", 1,0)
 
-#I am adding predictors one by one in order determined by my variable importance plot
-#I will keep adding them until the AIC stops improving
 
 m1 <- glm(Outcome_bin ~Processing.Days, #started with best predictor (according to model)
           data = model_data,
@@ -122,82 +120,8 @@ m1 <- glm(Outcome_bin ~Processing.Days, #started with best predictor (according 
 AIC(m1) #19155.66
 
 
-m2 <- glm(Outcome_bin ~Processing.Days+Fiscal.Year,
+m2 <- glm(Outcome_bin ~Processing.Days,
           data = model_data,
           family = binomial(link="logit")) 
-AIC(m2) #19028.98
-
-
-m3 <- glm(Outcome_bin ~Processing.Days+Fiscal.Year+Processor,
-          data = model_data,
-          family = binomial(link="logit")) 
-AIC(m3) #18847.73
-
-
-m4 <- glm(Outcome_bin ~Processing.Days+Fiscal.Year+Processor+Not.Timely,
-          data = model_data,
-          family = binomial(link="logit")) 
-AIC(m4) #18711.17
-
-
-m5 <- glm(Outcome_bin ~Processing.Days+Fiscal.Year+Processor+Not.Timely+Housing,
-          data = model_data,
-          family = binomial(link="logit")) 
-AIC(m5) #17673.8
-
-
-m6 <- glm(Outcome_bin ~Processing.Days+Fiscal.Year+Processor+Not.Timely+Housing+Not.Jurisdictional,
-          data = model_data,
-          family = binomial(link="logit")) 
-AIC(m6) #17572.95
-
-m7 <- glm(Outcome_bin ~Processing.Days+Fiscal.Year+Processor+Not.Timely+Housing+Not.Jurisdictional
-          +Race.Type,
-          data = model_data,
-          family = binomial(link="logit")) 
-AIC(m7) #17327.52
-
-m8 <- glm(Outcome_bin ~Processing.Days+Fiscal.Year+Processor+Not.Timely+Housing+Not.Jurisdictional
-          +Race.Type+Disability,
-          data = model_data,
-          family = binomial(link="logit")) 
-AIC(m8) #17323.12
-
-
-m9 <- glm(Outcome_bin ~Processing.Days+Fiscal.Year+Processor+Not.Timely+Housing+Not.Jurisdictional
-          +Race.Type+Disability+Public.Accommodations,
-          data = model_data,
-          family = binomial(link="logit")) 
-AIC(m9) #17236.73
-
-m10 <- glm(Outcome_bin ~Processing.Days+Fiscal.Year+Processor+Not.Timely+Housing+Not.Jurisdictional
-          +Race.Type+Disability+Public.Accommodations+Sex.Type,
-          data = model_data,
-          family = binomial(link="logit")) 
-AIC(m10) #17202.23
-
-
-m11 <- glm(Outcome_bin ~Processing.Days+Fiscal.Year+Processor+Not.Timely+Housing+Not.Jurisdictional
-           +Race.Type+Disability+Public.Accommodations+Sex.Type+Employment,
-           data = model_data,
-           family = binomial(link="logit")) 
-AIC(m11) #17203.33
-
-#-------IT GOT WORSE AFTER M11, SO M10 IS OUR BEST MODEL HERE ----------
-summary(m10)
-coef(m10)
-coef(m10) %>% exp()
-confint(m10)
-#baseline for Processor is "EEOC"
-#baseline for Not.Timely is "No"
-#baseline for Housing is "No"
-#baseline for Not.Jurisdictional is "No"
-#baseline for Race.Type is "American Indian"
-#baseline for Disability is "No"
-#baseline for Public.Accommodations is "No"
-#baseline for Sex.Type is "female"
-
-
-#All other variables held constant, cases that 
-
+AIC(m2) #19155.66
 
