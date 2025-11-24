@@ -5,8 +5,9 @@ library(tidyr)
 library(scales)
 library(forcats)  
 
-#read in clean data RDS that we created in the cleaning file
-model_data <- readRDS("clean_data.rds")
+#source clean data
+source("src/data_exploration_and_cleaning.R")
+
 #View(model_data)
 
 # --- 2. Define a Professional Theme ---

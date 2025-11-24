@@ -5,7 +5,8 @@ library(pROC)
 library(glmnet) 
 library(lubridate)
 
-model_data <- readRDS("clean_data.rds")
+#source clean data
+source("src/data_exploration_and_cleaning.R")
 View(model_data)
 
 RNGkind(sample.kind = "default")

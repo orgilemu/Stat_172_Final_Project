@@ -5,7 +5,8 @@ library(ggplot2)
 library(pROC)
 library(tidymodels)
 
-model_data <- readRDS("clean_data.rds")
+#source clean data
+source("src/data_exploration_and_cleaning.R")
 RNGkind(sample.kind = "default")
 set.seed(2025)
 

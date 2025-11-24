@@ -3,8 +3,8 @@ library(rpart) # for classification trees
 library(rpart.plot) # to get attractive plots of trees
 
 
-# Read in clean data RDS that we created in the cleaning file
-model_data <- readRDS("clean_data.rds")
+#source clean data
+source("src/data_exploration_and_cleaning.R")
 View(model_data)
 
 
