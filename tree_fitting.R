@@ -79,7 +79,7 @@ pi_hat <- predict(tree2, test.df, type = "prob")[ , "Favorable"]
 # "Favorable" is out positive event 
 rocCurve <- roc(response = test.df$Outcome, #supply our truth (in test set)
                 predictor = pi_hat, # supply predicted PROBABILITIES of positive case
-                levels = c("Unfavorable", "Favorable")) # (negative, positive)
+                levels = c("Unfavorable", "Favorable")) # (negative, positive) 
 
 # Plot ROC curve
 plot(rocCurve, print.thres = TRUE, print.auc = TRUE)
@@ -101,3 +101,15 @@ plot(rocCurve, print.thres = TRUE, print.auc = TRUE)
 pi_star <- coords(rocCurve, "best", ret = "threshold")[1]
 # Pi* is equal to 0.1306307
 test.df$result_pred <- as.factor(ifelse(pi_hat > pi_star, "Unfavorable", "Favorable"))
+
+# Classification rule interpretations and accuracy 
+# If Housing=Yes, Processing.Days>=107.5 AND Fiscal.Year>=2020.5 THEN we predict an Unfavorable outcome. 
+# If Housing=No, Processing.Days< 179.5 AND Processor=EEOC THEN we predict an Unfavorable outcome. 
+
+# Calculating Accuracy 
+(5909 + 370)/(5909 + 370 + 149 + 646)
+# Accuracy = 0.8876166
+
+
+
+
