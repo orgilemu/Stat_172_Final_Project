@@ -178,5 +178,31 @@ ggplot() +
   scale_colour_brewer(palette = "Paired") +
   labs(x = "1 - Specificity", y = "Sensitivity", color = "Model") +
   theme_minimal()
+# ------- interpretation -------
 
+lr_lasso_cv
+lr_ridge_cv
+
+# chose lasso based on this
+
+lr_lasso_1se <- glmnet(
+  x.train, y.train,
+  family = "binomial",
+  alpha = 1,
+  lambda = lr_lasso_cv$lambda.1se
+)
+coef(lr_lasso_1se)
+
+
+# coefficients  > 0 - increases log-odds of Favorable
+# coefficients  < 0 - decreases log-odds of Favorable
+
+# let's find coefficients exp(s0)
+
+b <- as.matrix(coef(lr_lasso_1se))
+OR <- exp(b)   # same shape matrix, now odds ratios
+OR
+
+# OR  > 1 - increases log-odds of Favorable
+# OR  < 1 - decreases log-odds of Favorable
 
