@@ -85,6 +85,14 @@ data <- data %>%
 #View(data)
 #summary(data)
 
+#since our y var Outcome is just a categorization of Closure.Description, we want to remove this from our data frame and only 
+#use Outcome instead.
+
+data <- data %>%
+  select(-Closure.Description)
+
+#confirm it worked
+#head(data)
 
 #Replace NA's in Race.Type, Sex.Type, National.Origin.Type and Religion.Type into a new column called 
 #"Unknown"
@@ -122,5 +130,5 @@ data <- data %>%
 #these 5 have a Date.Closed, but no Date.Opened. Since there are only 5, we are just going to drop them.
 model_data <- data %>%
   filter(!is.na(Processing.Days))
-#summary(data)
+
 

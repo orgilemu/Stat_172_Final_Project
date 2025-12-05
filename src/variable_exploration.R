@@ -1,3 +1,6 @@
+#this model is for exploring our variables before any modeling to see what kind of 
+#relationships might exist in our data
+
 rm(list=ls())
 library(dplyr)
 library(ggplot2)

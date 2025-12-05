@@ -1,3 +1,5 @@
+#this file fits a classification tree
+
 rm(list = ls())
 library(rpart) # for classification trees 
 library(rpart.plot) # to get attractive plots of trees

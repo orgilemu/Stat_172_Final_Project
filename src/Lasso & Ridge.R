@@ -1,3 +1,4 @@
+#this file is for penalized regression
 rm(list = ls())
 library(tidyverse)
 library(pROC) 
@@ -7,7 +8,7 @@ library(lubridate)
 
 #source clean data
 source("src/data_exploration_and_cleaning.R")
-View(model_data)
+#View(model_data)
 
 RNGkind(sample.kind = "default")
 set.seed(2025)
@@ -22,6 +23,7 @@ train.idx <- sample(x = 1:nrow(model_data), size = 0.7*nrow(model_data))
 train.df <- model_data[train.idx,]
 test.df <- model_data[-train.idx,]
 
+#regular mle
 lr_mle <- glm(Outcome_bin ~ Fiscal.Year + Not.Timely + Not.Jurisdictional + Processor + Housing + Employment + 
                 Public.Accommodations + Education + Credit + Race.Type + Disability + Age + 
                 Sex.Type + Pregnancy + National.Origin.Type + Familial.Status + Marital.Status + Religion.Type +
@@ -30,9 +32,6 @@ lr_mle <- glm(Outcome_bin ~ Fiscal.Year + Not.Timely + Not.Jurisdictional + Proc
               family = binomial(link = "logit"))
 
 summary(lr_mle)
-
-#CHECK FOR COMPLETE SEPARATION
-
 lr_ml_coefs <- coef(lr_mle)
 
 # ---- Lasso & Ridge ------
@@ -178,31 +177,3 @@ ggplot() +
   scale_colour_brewer(palette = "Paired") +
   labs(x = "1 - Specificity", y = "Sensitivity", color = "Model") +
   theme_minimal()
-# ------- interpretation -------
-
-lr_lasso_cv
-lr_ridge_cv
-
-# chose lasso based on this
-
-lr_lasso_1se <- glmnet(
-  x.train, y.train,
-  family = "binomial",
-  alpha = 1,
-  lambda = lr_lasso_cv$lambda.1se
-)
-coef(lr_lasso_1se)
-
-
-# coefficients  > 0 - increases log-odds of Favorable
-# coefficients  < 0 - decreases log-odds of Favorable
-
-# let's find coefficients exp(s0)
-
-b <- as.matrix(coef(lr_lasso_1se))
-OR <- exp(b)   # same shape matrix, now odds ratios
-OR
-
-# OR  > 1 - increases log-odds of Favorable
-# OR  < 1 - decreases log-odds of Favorable
-

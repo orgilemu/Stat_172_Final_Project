@@ -1,4 +1,4 @@
-#random forest
+#this model is for fitting our random forest, and fitting the predictive model using the variable importance plot 
 rm(list = ls())
 library(randomForest)
 library(ggplot2)
@@ -13,10 +13,6 @@ set.seed(2025)
 train.idx <- sample(x=1:nrow(model_data), size = .7*nrow(model_data))
 train.df <- model_data[train.idx, ]    
 test.df <- model_data[-train.idx, ]
-#remove Closure.Description because we cleaned this to create binary Outcome variable
-test.df <- test.df %>% subset(select = -c(Closure.Description)) 
-train.df <- train.df %>% subset(select = -c(Closure.Description))
-
 
 #just used to see if 1000 separate trees takes too long
 # myforest <- randomForest(Outcome ~Fiscal.Year + Not.Timely + Not.Jurisdictional + Processor + Housing + Employment + 
@@ -183,31 +179,3 @@ m11 <- glm(Outcome_bin ~Processing.Days+Fiscal.Year+Processor+Not.Timely+Housing
 AIC(m11) #17203.33
 
 #-------IT GOT WORSE AFTER M11, SO M10 IS OUR BEST MODEL HERE ----------
-#THE AIC IS 17202.23
-summary(m10)
-coef(m10)
-coef(m10) %>% exp()
-confint(m10)
-#baseline for Processor is "EEOC"
-#baseline for Not.Timely is "No"
-#baseline for Housing is "No"
-#baseline for Not.Jurisdictional is "No"
-#baseline for Race.Type is "American Indian"
-#baseline for Disability is "No"
-#baseline for Public.Accommodations is "No"
-#baseline for Sex.Type is "female"
-
-
-#All other variables held constant, the odds of a favorable outcome for cases that are not timely 
-#(the complaint was NOT received within 300 days of the alleged incident) are 6.2 times the odds of cases that are timely. 
-#We are 95% confident that the true change in odds is between e^1.6 and e^2.04, or 
-#4.95 and 7.69 times higher than timely cases.
-
-
-#All other variables held constant, for each additional month (30 days) that the case is being processed,
-#the odds of a favorable outcome change by a factor of e^30*.00034 = 1.010308, or a 1% increase in odds.
-#We are 95% confident that the true change in odds are between e^30*0.00018 and e^30*.0005 or a 0.5% increase
-#to a 1.5% increase.
-
-#All other variables held constant, 
-
