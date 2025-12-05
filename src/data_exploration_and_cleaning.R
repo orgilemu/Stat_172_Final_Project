@@ -13,6 +13,12 @@ data <- read.csv('raw/Closed_Discrimination_Complaint_Cases_in_Iowa.csv', string
 # Based on our client (a potential victim), a "win" is a favorable
 # settlement. A "loss" is ANY other final closure that is not a win.
 
+
+#------------AI USAGE: Gemini helped explain the definition of each outcome, so that we could decide which were considered
+#favorable/unfavorable, and which we should exclude because they neither help/hurt our client.
+#AI also helped with the code for cleaning this column --------------------
+
+
 # Favorable" (Win / Y=1): The client received a tangible, positive outcome.
 favorable_outcomes <- c(
   "Satisfactory Adjustment",
@@ -44,17 +50,13 @@ unfavorable_outcomes <- c(
   "Withdrawal" # Simple withdrawal without settlement
 )
 
-# "Exclude": These are not final "wins" or "losses" for this agency.
+# Exclude: These are not final "wins" or "losses" for this agency.
 # We will filter these cases out entirely.
-#
-# - Right to Sue: This is NOT a loss. It's a procedural step to
-#   escalate the case to court. Including it would distort our model.
-# - Transferred: The case was simply moved to another agency.
-# - Please Select / Other: Bad data.
-# - Closed After Public Hearing: Ambiguous outcome, safer to exclude.
-#
-# Any category NOT listed in favorable_outcomes or unfavorable_outcomes
-# will be filtered out.
+# Right to Sue: This is NOT a loss. It's a procedural step to
+# escalate the case to court. Including it would distort our model.
+# Transferred: The case was simply moved to another agency.
+# Please Select / Other: Bad data.
+# Closed After Public Hearing: Ambiguous outcome, safer to exclude.
 
 
 # --- Create New 'Outcome' Column and Filter ---
@@ -96,6 +98,10 @@ data <- data %>%
 
 #Replace NA's in Race.Type, Sex.Type, National.Origin.Type and Religion.Type into a new column called 
 #"Unknown"
+
+#----------AI USAGE: Gemini helped with the code to clean this because there were issues with converting between string/factor
+#and removing the na's ---------------------
+
 columns_to_clean_na <- c(
   "Race.Type",
   "Sex.Type",
@@ -114,7 +120,6 @@ data <- data %>%
           NULL = "NA",  # Recode the string "NA" to NA
           NULL = " "    # Recode a single space " " to NA
         ) %>%
-        # NOW, fct_explicit_na() will find those real NAs
         fct_explicit_na(na_level = "Unapplicable")
     )
   )

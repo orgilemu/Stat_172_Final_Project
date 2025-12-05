@@ -10,10 +10,16 @@ source("src/data_exploration_and_cleaning.R")
 #the best AUC here was the regular MLE. However, for predictions, we will use our random forest model from 
 #random_forest.R because its AUC is .858
 
+#(this is just pasted from the random_forest file)
+#if we set pi* = .152 (threshold that we set for prediction), we are estimated to get a 
+#specificity of .843 and sensitivity of 0.731
+#that is, we will predict an unfavorable outcome 84% of the time when the outcome is actually unfavorable
+#further, we will predict a favorable outcome 73% of the time when the outcome is actually favorable
+
 
 # --------------------------- INTERPRETATIONS -----------------------------------------------------
 # Our best model from the lasso & ridge.R file was just the regular MLE (only by .001), so let's compare it to
-#the best model from the result of our variable importance plot in our random_forest.R file (this was m10)
+#the best GLM model from the result of our variable importance plot in our random_forest.R file (this was m10)
 forest_model <- glm(Outcome_bin ~Processing.Days+Fiscal.Year+Processor+Not.Timely+Housing+Not.Jurisdictional
                     +Race.Type+Disability+Public.Accommodations+Sex.Type,
                     data = model_data,
