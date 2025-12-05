@@ -1,3 +1,16 @@
+Project Overview: Clearly describes project goals, methods, and data sources in a
+succinct summary. Conveys purpose and utility of the project, making it easy for others to understand at
+a high level. Data Sources and Preparation: Provides comprehensive details on data sources, format,
+and preparation steps. If data is external, offers clear access instructions. Data processing is done via code.
+Any non-code pre-processing is detailed. Lists all needed packages, with instructions on setting up the
+environment. Instructions are complete and error-free, enabling seamless setup. Code execution: Gives
+clear, step-by-step instructions on how to execute the code. Lists required commands and settings, with
+examples. Code is ready for reproduction by others. Organization: README is well-organized, free from
+grammar and spelling errors, and professional in tone. Uses technical language appropriately for a data
+science audience
+
+
+
 ---
 title: "Analysis of Discrimination Complaint Cases in Iowa"
 authors: "Kendall Starcevich, Olivia Soppa, & Munkh-Orgil Tumurchudur"
