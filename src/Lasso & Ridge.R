@@ -4,7 +4,7 @@ library(tidyverse)
 library(pROC) 
 # new packages
 library(glmnet) 
-library(lubridate)
+
 
 #source clean data
 source("src/data_exploration_and_cleaning.R")
@@ -13,21 +13,32 @@ source("src/data_exploration_and_cleaning.R")
 RNGkind(sample.kind = "default")
 set.seed(2025)
 
+#need Y var to be binary, also need to set up for creating vectors so have to have a 
+#different set up than tree/forest building
+
 model_data <- model_data %>% 
   mutate(Outcome_bin = ifelse(Outcome == "Favorable", 1, 0)
-  ) 
+  )
 
-
+model_data <- model_data %>% select (
+  -Outcome,
+  -Date.Opened,         
+  -Date.Closed,  
+  -Race,  
+  -Sex,          
+  -National.Origin, 
+  -Religion,
+  -Processing.Days,
+  -Not.Jurisdictional,
+  -Fiscal.Year,
+  -Not.Timely)
 
 train.idx <- sample(x = 1:nrow(model_data), size = 0.7*nrow(model_data))
 train.df <- model_data[train.idx,]
 test.df <- model_data[-train.idx,]
 
 #regular mle
-lr_mle <- glm(Outcome_bin ~ Fiscal.Year + Not.Timely + Not.Jurisdictional + Processor + Housing + Employment + 
-                Public.Accommodations + Education + Credit + Race.Type + Disability + Age + 
-                Sex.Type + Pregnancy + National.Origin.Type + Familial.Status + Marital.Status + Religion.Type +
-                Creed + Color + Sexual.Orientation + Gender.Identity + Retaliation + Processing.Days, 
+lr_mle <- glm(Outcome_bin ~ .,
               data = train.df, 
               family = binomial(link = "logit"))
 
@@ -38,15 +49,9 @@ lr_ml_coefs <- coef(lr_mle)
 
 
 # create matrix which one-hot codes all factor variables
-x.train <- model.matrix(Outcome_bin ~ Fiscal.Year + Not.Timely + Not.Jurisdictional + Processor + Housing + Employment + 
-                          Public.Accommodations + Education + Credit + Race.Type + Disability + Age + 
-                          Sex.Type + Pregnancy + National.Origin.Type + Familial.Status + Marital.Status + Religion.Type +
-                          Creed + Color + Sexual.Orientation + Gender.Identity + Retaliation + Processing.Days, data = train.df)[, -1]
+x.train <- model.matrix(Outcome_bin ~ ., data = train.df)[, -1]
 
-x.test <- model.matrix(Outcome_bin ~ Fiscal.Year + Not.Timely + Not.Jurisdictional + Processor + Housing + Employment + 
-                         Public.Accommodations + Education + Credit + Race.Type + Disability + Age + 
-                         Sex.Type + Pregnancy + National.Origin.Type + Familial.Status + Marital.Status + Religion.Type +
-                         Creed + Color + Sexual.Orientation + Gender.Identity + Retaliation + Processing.Days, data = test.df)[, -1]
+x.test <- model.matrix(Outcome_bin ~ ., data = test.df)[, -1]
 
 # create vectors of 0/1 y variable
 y.train <- as.vector(train.df$Outcome_bin)
@@ -76,9 +81,6 @@ lr_lasso_coefs <- coef(lr_lasso_cv, s = "lambda.min") %>% as.matrix()
 lr_ridge_coefs
 lr_lasso_coefs
 
-
-
-
 ggplot() + 
   geom_point(aes(x = lr_ml_coefs, y = lr_ridge_coefs)) +
   geom_abline(aes(intercept = 0, slope = 1)) +
@@ -88,8 +90,6 @@ ggplot() +
   geom_point(aes(x = lr_ml_coefs, y = lr_lasso_coefs)) +
   geom_abline(aes(intercept = 0, slope = 1)) +
   xlim(c(-10, 10)) + ylim(c(-10,10))
-
-
 
 
 final_lasso <- glmnet(x.train, y.train, 
@@ -102,9 +102,6 @@ final_ridge <- glmnet(x.train, y.train,
                       alpha = 0 ,
                       lambda = best_ridge_lambda)
 
-
-
-
 test.df.preds <- test.df %>%
   mutate(mle_pred = predict(lr_mle, test.df, type = "response"),
          lasso_pred = predict(final_lasso, x.test, type = "response")[,1],
@@ -112,17 +109,8 @@ test.df.preds <- test.df %>%
 
 view(test.df.preds) 
 
-
-
-
-
 cor(test.df.preds$mle_pred, test.df.preds$lasso_pred)
 plot(test.df.preds$mle_pred, test.df.preds$lasso_pred)
-
-
-
-
-
 
 mle_rocCurve <- roc(response = as.factor(test.df.preds$Outcome_bin),
                     predictor = test.df.preds$mle_pred,
@@ -136,11 +124,9 @@ ridge_rocCurve <- roc(response = as.factor(test.df.preds$Outcome_bin),
                       predictor = test.df.preds$ridge_pred,
                       levels = c("0", "1"))
 
-
-
-plot(mle_rocCurve)
-plot(lasso_rocCurve)
-plot(ridge_rocCurve)
+plot(mle_rocCurve, print.thres = TRUE, print.auc = TRUE)
+plot(lasso_rocCurve, print.thres = TRUE, print.auc = TRUE)
+plot(ridge_rocCurve, print.thres = TRUE, print.auc = TRUE)
 
 #make data frame of MLE ROC info
 mle_data <- data.frame(
@@ -177,3 +163,21 @@ ggplot() +
   scale_colour_brewer(palette = "Paired") +
   labs(x = "1 - Specificity", y = "Sensitivity", color = "Model") +
   theme_minimal()
+
+
+#The highest AUC is regular MLE. however, lasso has the highest sensitivity of the three.
+#since we are prioritizing sensitivity in the success of our model and it is only a .001 difference in AUC,
+#we will choose lasso as the best predictive model. 
+
+#using the lasso model...
+#if we set pi* = .162 (threshold that we set for prediction), we are estimated to get a 
+#specificity of .693 and sensitivity of 0.601
+#that is, we will predict an unfavorable outcome 69% of the time when the outcome is actually unfavorable
+#further, we will predict a favorable outcome 60% of the time when the outcome is actually favorable
+
+pi_hat <- test.df.preds$lasso_pred
+pi_star <- coords(lasso_rocCurve, "best", ret = "threshold")$threshold[1]
+test.df$lasso_preds <- ifelse(pi_hat>pi_star, 1,0)
+
+coef(final_lasso)
+exp(coef(final_lasso))

@@ -133,7 +133,46 @@ data <- data %>%
 #View(na_processing_rows)
 
 #these 5 have a Date.Closed, but no Date.Opened. Since there are only 5, we are just going to drop them.
+
 model_data <- data %>%
   filter(!is.na(Processing.Days))
 
+#----------------creating training and testing data so it is consistent/reproducible across all models-------------------
 
+# Setting the seed
+RNGkind(sample.kind = "default")
+set.seed(2025)
+
+# Creating a vector of randomly selected rows that will go into training data set 
+train.idx <- sample(x = 1:nrow(model_data), 0.7*nrow(model_data))
+
+# Split data into train/test
+train.df <- model_data[train.idx, ]
+#for testing data, we can keep every x var. This will help us be able to identify patterns 
+#with our predictions, for example, to see if there is a trend overtime
+test.df <- model_data[-train.idx, ] 
+
+
+#by editing the training dataset below, we can use the ~ . notation when creating models.
+#this should make it easier to reproduce and make sure across files we are using the same variables
+
+#for predictive models, we want to take away these three variables because these are results of 
+#the judge's decisions. Since we want to screen new cases and predict the outcome BEFORE they file and go 
+#through the courts, we would not have these columns.
+
+train_predictive <- train_df %>%
+  select(
+    -Date.Opened,         
+    -Date.Closed,  
+    #for the four columns below, we have a .Type column corresponding to it. It is redundant to have
+    #both in.
+    -Race,  
+    -Sex,          
+    -National.Origin, 
+    -Religion,
+    -Not.Timely,  #discussed in detail in interpretations, due to nature of data. A ton of not timely cases succeeded, likely 
+    #because these were extreme circumstances. regular not timely cases likely don't get filed or get rejected before filing.
+    -Processing.Days,
+    -Not.Jurisdictional,
+    -Fiscal.Year #this is when it closes, so this is unknown
+  )
