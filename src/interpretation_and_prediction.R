@@ -3,6 +3,8 @@ rm(list = ls())
 library(tidyverse)
 library(glmnet) 
 library(logistf) #for firths
+library(ggplot2)
+library(dplyr)
 
 #source clean data
 source("src/data_exploration_and_cleaning.R")
@@ -158,14 +160,17 @@ final_descriptive_glm <- logistf(Outcome_bin ~ Processor + Housing +
 #all else held constant, the odds of a positive outcome for claims filed for housing complaints are 3.9 times higher than 
 #non-housing claims. We are 95% confident that the true change in odds is between a factor of 3.5 and 4.3. 
 
-#race-based discrimination cases are not successful
-#all else held constant, the odds of a positive outcome for claims based on race are between 
-#24-57% less than non-race discrimination cases. Race type of asian and pacific islander seems to have the 
-#least difference in odds out of all race types, at 24% less.
+
+# Race-based discrimination cases are not successful.
+# All else held constant, claims based on American Indian, Black, White, or 'Other' races
+# have significantly lower odds of a positive outcome compared to non-race claims.
+# These groups face odds that are between 25% and 57% lower than non-race based claims. The only
+# race type that did not have a significant difference from non-race based claims was
+#Asian/Pacific Islander.
 
 #marital status claims are not successful -
 #all else held constant, the odds of a positive outcome for complaints on the basis of marital status are 
-#77% less than non marital status based claims. We are 95% confident that the true value is between 
+#88% less than non marital status based claims. We are 95% confident that the true value is between 
 #52% and 99% less.
 
 #disability cases are successful - 
@@ -194,19 +199,138 @@ final_descriptive_glm <- logistf(Outcome_bin ~ Processor + Housing +
 #confident that the true value is between 47% and 60% less.
 
 
-#education cases are not successful (but a very big range)-
+#education cases are not successful -
 #all else held constant, the odds for a positive outcome for 
-#complaints associated with education are 54% less than non-education based claims. We are 95%
+#complaints associated with education are 29% less than non-education based claims. We are 95%
 #confident that the true value is between 4% and 49% less.
 
 
-#not much success in filing outside of catholic, jewish, muslim, protestant, or 7th day adventist - 
+#not much success in religion, ESPECIALLY protestant- 
 #all else held constant, the only religion type that has a statistically significant difference in odds
-#of a positive outcome compared to not filing for religion based discrimination is type "other". The odds of a positive outcome
-#for religion types that are NOT catholic, jewish, muslim, protestant, or 7th day adventist are 61% less than 
+#of a positive outcome compared to not filing for religion based discrimination is type "other" and "protestant". The odds of a positive outcome
+#for religion types that are NOT catholic, jewish, muslim, protestant or 7th day adventist are 61% less than 
 #non-religion based cases. We are 95% confident that the true value is between 47% and 72% less.
+#However, for protestants, the odds of a positive outcome are 80% less than not filing. We are 95% confident
+#that the true value is between 51% and 95% less.
 
 #all else held constant, the only two national origin types that have a statistically significant 
 #difference in odds of a positive outcome compared to not filing for national origin based discrimination
 #are types "Mexican" and "Hispanic". The odds for these both are around 36% less than not filing for national origin based discrimination. 
 #we are 95% confident that the true value is between 11% and 55% less.
+
+
+#--------------------------------plotting results-----------------------------
+#AI USAGE------ USED GEMINI FOR THESE PLOTS
+
+# 1. Create a clean dataframe of results
+data <- data.frame(
+  Factor = c("Local Agency", "Housing", "Pregnancy", "Disability", 
+             "Sex: Male", "Age", "Education", "National Origin: Mexican", 
+             "Public Accommodations", "Race: Black", "Race: White", "Marital Status"),
+  OddsRatio = c(4.06, 3.86, 1.46, 1.20, 
+                0.69, 0.76, 0.71, 0.64, 
+                0.46, 0.58, 0.52, 0.13),
+  LowerCI = c(3.11, 3.49, 1.20, 1.10, 
+              0.55, 0.67, 0.51, 0.45, 
+              0.39, 0.47, 0.43, 0.01),
+  UpperCI = c(5.37, 4.26, 1.78, 1.31, 
+              0.85, 0.85, 0.96, 0.90, 
+              0.54, 0.72, 0.63, 0.48),
+  Type = c("Good", "Good", "Good", "Good", 
+           "Bad", "Bad", "Bad", "Bad", 
+           "Bad", "Bad", "Bad", "Bad")
+)
+
+# 2. Plot
+plot <- ggplot(data, aes(x = OddsRatio, y = reorder(Factor, OddsRatio), color = Type)) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "gray50", size = 1) +
+  geom_point(size = 4) +
+  geom_errorbarh(aes(xmin = LowerCI, xmax = UpperCI), height = 0.3, size = 1) +
+  scale_color_brewer(palette = "Set1") +
+  labs(
+    title = "What Drivers Increase Your Odds of Success?",
+    subtitle = "Odds Ratios (95% Confidence Intervals) relative to the Baseline",
+    x = "Odds Ratio ( > 1 = Higher Odds of Favorable Outcome)",
+    y = "",
+    caption = "Baseline: Federal Agency, Non-Housing, Female, Non-Race Case"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    legend.position = "none",
+    axis.text.y = element_text(face = "bold")
+  )
+
+print(plot)
+
+# --- Manual Data Entry from Output ---
+religion_data <- data.frame(
+  Type = c("Muslim", "Sikhs", "Jewish", "Catholic", 
+           "Protestant", "7th Day Adventist", "Other"),
+  OddsRatio = c(1.27, 5.39, 0.30, 0.65, 
+                0.19, 0.59, 0.39), # exp(coef)
+  LowerCI = c(0.80, 0.04, 0.03, 0.21, 
+              0.05, 0.004, 0.27),  # exp(lower 0.95)
+  UpperCI = c(1.95, 102.3, 1.14, 1.55, 
+              0.49, 5.19, 0.53),   # exp(upper 0.95)
+  Significant = c("No", "No", "No", "No", 
+                  "Yes", "No", "Yes") # Based on p < 0.05
+)
+
+# --- The Plot ---
+plot_religion <- ggplot(religion_data, aes(x = OddsRatio, y = reorder(Type, OddsRatio), color = Significant)) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "black") +
+  
+  # Error Bars
+  geom_errorbarh(aes(xmin = LowerCI, xmax = UpperCI), height = 0.2, size = 1) +
+  geom_point(size = 4) +
+  
+  # Log Scale for X-axis (CRITICAL for wide ranges like Sikhs)
+  scale_x_log10(breaks = c(0.1, 0.5, 1, 2, 5, 10, 100)) +
+  
+  scale_color_brewer(palette = "Set1") +
+  
+  labs(
+    title = "Religion-Based Outcome Odds",
+    subtitle = "Odds Ratios relative to Non-Religion Cases (Log Scale)",
+    caption = "Note: 'Sikhs' shows high uncertainty (wide bar). 'Protestant' is significantly lower.",
+    x = "Odds Ratio (Log Scale)",
+    y = "Religion Type"
+  ) +
+  theme_minimal(base_size = 14)
+
+print(plot_religion)
+
+
+
+# --- Manual Data Entry ---
+origin_data <- data.frame(
+  Type = c("East Indian", "Hispanic", "Mexican", 
+           "Afghani/Arab/Mid-East", "Other"),
+  OddsRatio = c(0.15, 0.63, 0.64, 
+                1.08, 0.95), 
+  LowerCI = c(0.001, 0.47, 0.45, 
+              0.11, 0.79), 
+  UpperCI = c(1.19, 0.85, 0.89, 
+              4.83, 1.13), 
+  Significant = c("No", "Yes", "Yes", 
+                  "No", "No") 
+)
+
+# --- The Plot ---
+plot_origin <- ggplot(origin_data, aes(x = OddsRatio, y = reorder(Type, OddsRatio), color = Significant)) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "black") +
+  geom_errorbarh(aes(xmin = LowerCI, xmax = UpperCI), height = 0.2, size = 1) +
+  geom_point(size = 4) +
+  
+  scale_color_brewer(palette="Set1") +
+  
+  labs(
+    title = "National Origin Outcomes",
+    subtitle = "Odds Ratios relative to Non-National Origin Cases",
+    x = "Odds Ratio (< 1 = Lower Odds of Success)",
+    y = "National Origin Group"
+  ) +
+  theme_minimal(base_size = 14)
+
+print(plot_origin)

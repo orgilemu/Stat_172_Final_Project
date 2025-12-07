@@ -6,15 +6,15 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(scales)
-library(forcats)  
+library(forcats)
 
 #source clean data
 source("src/data_exploration_and_cleaning.R")
 
 #View(model_data)
 
-# --- 2. Define a Professional Theme ---
-#
+# --- Define a Professional Theme ---
+# AI USAGE HERE - GEMINI
 # We can define a theme to reuse for all our plots
 # This makes them look consistent and professional.
 theme_clean <- theme_minimal(base_size = 12) +
@@ -53,7 +53,7 @@ ggplot(data = model_data) +
 
 
 # --- `Processing.Days` by Outcome ---
-#
+# -------------------AI USAGE HERE - GEMINI FOR ALL PLOTS BELOW----------------------
 # We'll use a density plot to see the distribution.
 # We'll also filter out extreme long-tail cases (> 730 days)
 # to make the main distribution more visible.
@@ -74,6 +74,7 @@ plot1 <- model_data %>%
   theme_clean
 print(plot1)
 
+#plot outcome rates by complaint basis
 basis_data <- model_data %>%
   select(Outcome, Employment, Housing, Public.Accommodations, Education, Credit) %>%
   pivot_longer(
@@ -85,17 +86,7 @@ basis_data <- model_data %>%
 
 
 plot2 <- basis_data %>%
-  #
-  # --- MODIFICATION HERE ---
-  #
-  # We use fct_reorder() on the x-axis variable.
-  # 1. `.f = Complaint.Basis`: The factor we want to reorder.
-  # 2. `.x = Outcome == "Favorable"`: What we use to reorder. This creates
-  #    a TRUE/FALSE (1/0) vector.
-  # 3. `.fun = mean`: We calculate the mean of the 1s and 0s, which
-  #    gives us the proportion of "Favorable" cases.
-  # 4. `.desc = TRUE`: We sort in descending (decreasing) order.
-  #
+  
   ggplot(aes(x = fct_reorder(Complaint.Basis, Outcome == "Favorable",
                              .fun = mean, .desc = TRUE),
              fill = Outcome)) +
@@ -145,11 +136,7 @@ plot3 <- demo_data %>%
 print(plot3)
 
 
-# --- 6. NEW PLOT 4: Outcome Rates by Processor ---
-#
-# This plot answers the client question:
-# "Does it matter which agency handles my complaint?"
-#
+# --- Outcome Rates by Processor ---
 plot4 <- model_data %>%
   ggplot(aes(x = fct_reorder(Processor, Outcome == "Favorable",
                              .fun = mean, .desc = TRUE),
@@ -166,27 +153,13 @@ plot4 <- model_data %>%
     caption = "Data: Iowa Civil Rights Commission"
   ) +
   theme_clean
-
-# To see the plot:
  print(plot4)
 
 
-# --- 7. NEW PLOT 5: Outcome Rates by Race.Type ---
-#
-# This leverages our data cleaning of the 'Type' columns.
-# It answers: "For cases where Race *is* a basis,
-# do outcomes differ by the specific race type documented?"
-#
-# --- !!! IMPORTANT !!! ---
-# You must run this chunk below to create 'race_type_data'
-# BEFORE you can run the 'plot5' chunk.
-#
+# --- Outcome Rates by Race.Type --
 race_type_data <- model_data %>%
   filter(Race == "Yes") # Filter to ONLY cases where Race was a basis
 
-#
-# Now that 'race_type_data' exists, you can run this chunk to create plot5
-#
 plot5 <- race_type_data %>%
   ggplot(aes(x = fct_reorder(Race.Type, Outcome == "Favorable",
                              .fun = mean, .desc = TRUE),
@@ -204,21 +177,10 @@ plot5 <- race_type_data %>%
   ) +
   theme_clean +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Add angle for readability
-
-# To see the plot:
  print(plot5)
 
 
-# --- 8. NEW PLOT 6: Multivariate Interaction Plot ---
-#
-# This is a "stupendous" plot for your client.
-# It answers: "Is filing for 'Retaliation' *with* 'Race'
-# different than filing for 'Race' alone?"
-#
-# --- !!! IMPORTANT !!! ---
-# You must run this chunk below to create 'interaction_data'
-# BEFORE you can run the 'plot6' chunk.
-#
+# --- Multivariate Interaction Plot ---
 interaction_data <- model_data %>%
   # Focus only on cases where one or both of these were a basis
   filter(Race == "Yes" | Retaliation == "Yes") %>%
@@ -229,12 +191,7 @@ interaction_data <- model_data %>%
       Race == "No"  & Retaliation == "Yes" ~ "Retaliation Only"
     )
   ) %>%
-  # Remove any stray cases (shouldn't be any, but good practice)
-  filter(!is.na(Complaint.Profile))
 
-#
-# Now that 'interaction_data' exists, you can run this chunk to create plot6
-#
 plot6 <- interaction_data %>%
   ggplot(aes(x = fct_reorder(Complaint.Profile, Outcome == "Favorable",
                              .fun = mean, .desc = TRUE),
@@ -251,8 +208,13 @@ plot6 <- interaction_data %>%
     caption = "Data: Iowa Civil Rights Commission"
   ) +
   theme_clean
-
-# To see the plot:
  print(plot6)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 
 

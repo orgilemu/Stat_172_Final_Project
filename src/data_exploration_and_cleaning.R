@@ -160,7 +160,7 @@ test.df <- model_data[-train.idx, ]
 #the judge's decisions. Since we want to screen new cases and predict the outcome BEFORE they file and go 
 #through the courts, we would not have these columns.
 
-train_predictive <- train_df %>%
+train_predictive <- train.df %>%
   select(
     -Date.Opened,         
     -Date.Closed,  
