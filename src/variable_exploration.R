@@ -209,12 +209,4 @@ plot6 <- interaction_data %>%
   ) +
   theme_clean
  print(plot6)
- 
- 
- 
- 
- 
- 
- 
-
 

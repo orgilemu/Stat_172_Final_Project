@@ -17,7 +17,48 @@ source("src/data_exploration_and_cleaning.R")
 #specificity of .693 and sensitivity of 0.601
 #that is, we will predict an unfavorable outcome 69% of the time when the outcome is actually unfavorable
 #further, we will predict a favorable outcome 60% of the time when the outcome is actually favorable
+# ---------------------- PLOT AUC's---------------
+#AI USAGE - GEMINI
+model_performance <- data.frame(
+  Model = c("Classification Tree", 
+            "Random Forest", 
+            "Regular MLE", 
+            "Lasso", 
+            "Ridge"),
+  
+  AUC = c(0.621,  # Replace with Tree AUC
+          0.605,  # Replace with Forest AUC
+          0.722,  # Replace with MLE AUC
+          0.722,  # Replace with Lasso AUC
+          0.720)  # Replace with Ridge AUC
+)
 
+auc_plot <- ggplot(model_performance, aes(x = reorder(Model, AUC), y = AUC, fill = Model)) +
+  
+  geom_col(width = 0.7, show.legend = FALSE) +
+  
+  geom_text(aes(label = round(AUC, 3)), 
+            vjust = -0.5, 
+            size = 5, 
+            fontface = "bold") +
+  #colorblind-friendly colors
+  scale_fill_brewer(palette = "Paired") +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.1)) +
+  
+  labs(
+    title = "Model Performance Comparison",
+    subtitle = "Area Under the Curve (AUC) on Test Data",
+    x = "Predictive Model",
+    y = "AUC Score (Higher is Better)"
+  ) +
+  
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    panel.grid.major.x = element_blank(), # Removes vertical grid lines
+    axis.text.x = element_text(face = "bold", size = 11)
+  )
+print(auc_plot)
 
 # --------------------------- INTERPRETATIONS -----------------------------------------------------
 
