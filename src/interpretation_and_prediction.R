@@ -218,11 +218,15 @@ final_descriptive_glm <- logistf(Outcome_bin ~ Processor + Housing +
 #are types "Mexican" and "Hispanic". The odds for these both are around 36% less than not filing for national origin based discrimination. 
 #we are 95% confident that the true value is between 11% and 55% less.
 
+#female has significantly better odds, male has significantly lower-
+#Female complainants have significantly higher odds of success than the baseline (cases where Sex was not a factor).
+#We are 95% confident that being Female increases the odds of a favorable outcome by 14% to 40%.
+#Male complainants face a statistically significant disadvantage. We are 95% confident that being Male decreases
+#the odds of a favorable outcome by roughly 2% to 31% compared to non-sex-based claims.
 
 #--------------------------------plotting results-----------------------------
 #AI USAGE------ USED GEMINI FOR THESE PLOTS
 
-# 1. Create a clean dataframe of results
 data <- data.frame(
   Factor = c("Local Agency", "Housing", "Pregnancy", "Disability", 
              "Sex: Male", "Age", "Education", "National Origin: Mexican", 
@@ -241,7 +245,7 @@ data <- data.frame(
            "Bad", "Bad", "Bad", "Bad")
 )
 
-# 2. Plot
+# PLOT ON ALL FACTORS
 plot <- ggplot(data, aes(x = OddsRatio, y = reorder(Factor, OddsRatio), color = Type)) +
   geom_vline(xintercept = 1, linetype = "dashed", color = "gray50", size = 1) +
   geom_point(size = 4) +
@@ -263,7 +267,6 @@ plot <- ggplot(data, aes(x = OddsRatio, y = reorder(Factor, OddsRatio), color = 
 
 print(plot)
 
-# --- Manual Data Entry from Output ---
 religion_data <- data.frame(
   Type = c("Muslim", "Sikhs", "Jewish", "Catholic", 
            "Protestant", "7th Day Adventist", "Other"),
@@ -277,7 +280,7 @@ religion_data <- data.frame(
                   "Yes", "No", "Yes") # Based on p < 0.05
 )
 
-# --- The Plot ---
+# --- PLOT ON BASIS OF RELIGION ---
 plot_religion <- ggplot(religion_data, aes(x = OddsRatio, y = reorder(Type, OddsRatio), color = Significant)) +
   geom_vline(xintercept = 1, linetype = "dashed", color = "black") +
   
@@ -302,8 +305,6 @@ plot_religion <- ggplot(religion_data, aes(x = OddsRatio, y = reorder(Type, Odds
 print(plot_religion)
 
 
-
-# --- Manual Data Entry ---
 origin_data <- data.frame(
   Type = c("East Indian", "Hispanic", "Mexican", 
            "Afghani/Arab/Mid-East", "Other"),
@@ -317,7 +318,7 @@ origin_data <- data.frame(
                   "No", "No") 
 )
 
-# --- The Plot ---
+# --- PLOT FOR BASIS OF NATIONAL ORIGIN ---
 plot_origin <- ggplot(origin_data, aes(x = OddsRatio, y = reorder(Type, OddsRatio), color = Significant)) +
   geom_vline(xintercept = 1, linetype = "dashed", color = "black") +
   geom_errorbarh(aes(xmin = LowerCI, xmax = UpperCI), height = 0.2, size = 1) +
@@ -334,3 +335,43 @@ plot_origin <- ggplot(origin_data, aes(x = OddsRatio, y = reorder(Type, OddsRati
   theme_minimal(base_size = 14)
 
 print(plot_origin)
+
+
+sex_data <- data.frame(
+  Gender = c("Female", "Male"),
+  OddsRatio = c(1.27, 0.82),       # Calculated exp(coef)
+  LowerCI = c(1.14, 0.69),         # Calculated exp(lower .95)
+  UpperCI = c(1.40, 0.98),         # Calculated exp(upper .95)
+  Type = c("Positive", "Negative") # For coloring
+)
+
+# ---PLOT FOR BASIS OF SEX ---
+plot_sex <- ggplot(sex_data, aes(x = OddsRatio, y = Gender, color = Type)) +
+  # Add vertical line at 1 (Neutral/Baseline)
+  geom_vline(xintercept = 1, linetype = "dashed", color = "gray50", size = 1) +
+  
+  # Add Error Bars (Confidence Intervals)
+  geom_errorbarh(aes(xmin = LowerCI, xmax = UpperCI), height = 0.2, size = 1) +
+  
+  # Add Points
+  geom_point(size = 5) +
+    scale_color_brewer(palette = "Set1") +
+
+  labs(
+    title = "Gender Outcomes in Discrimination Cases",
+    subtitle = "Odds Ratios relative to Baseline (Cases where Sex was not a factor)",
+    caption = "Baseline: 'Unapplicable' (Cases filed on other bases like Race or Housing)",
+    x = "Odds Ratio ( > 1 = Higher Chance of Success)",
+    y = ""
+  ) +
+  
+  # Professional Theme
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    plot.subtitle = element_text(color = "gray30"),
+    legend.position = "none", # Hide legend since the y-axis labels explain it
+    panel.grid.minor = element_blank()
+  )
+
+print(plot_sex)
