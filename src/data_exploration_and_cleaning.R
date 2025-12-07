@@ -1,7 +1,7 @@
 rm(list=ls())
 library(dplyr)
 library(forcats)
-data <- read.csv('Closed_Discrimination_Complaint_Cases_in_Iowa.csv', stringsAsFactors = TRUE)
+data <- read.csv('raw/Closed_Discrimination_Complaint_Cases_in_Iowa.csv', stringsAsFactors = TRUE)
 
 #explore data
 #View(data)
@@ -12,6 +12,12 @@ data <- read.csv('Closed_Discrimination_Complaint_Cases_in_Iowa.csv', stringsAsF
 # --- Y-VAR CLEANING: Outcome Categories ---
 # Based on our client (a potential victim), a "win" is a favorable
 # settlement. A "loss" is ANY other final closure that is not a win.
+
+
+#------------AI USAGE: Gemini helped explain the definition of each outcome, so that we could decide which were considered
+#favorable/unfavorable, and which we should exclude because they neither help/hurt our client.
+#AI also helped with the code for cleaning this column --------------------
+
 
 # Favorable" (Win / Y=1): The client received a tangible, positive outcome.
 favorable_outcomes <- c(
@@ -44,17 +50,13 @@ unfavorable_outcomes <- c(
   "Withdrawal" # Simple withdrawal without settlement
 )
 
-# "Exclude": These are not final "wins" or "losses" for this agency.
+# Exclude: These are not final "wins" or "losses" for this agency.
 # We will filter these cases out entirely.
-#
-# - Right to Sue: This is NOT a loss. It's a procedural step to
-#   escalate the case to court. Including it would distort our model.
-# - Transferred: The case was simply moved to another agency.
-# - Please Select / Other: Bad data.
-# - Closed After Public Hearing: Ambiguous outcome, safer to exclude.
-#
-# Any category NOT listed in favorable_outcomes or unfavorable_outcomes
-# will be filtered out.
+# Right to Sue: This is NOT a loss. It's a procedural step to
+# escalate the case to court. Including it would distort our model.
+# Transferred: The case was simply moved to another agency.
+# Please Select / Other: Bad data.
+# Closed After Public Hearing: Ambiguous outcome, safer to exclude.
 
 
 # --- Create New 'Outcome' Column and Filter ---
@@ -85,9 +87,21 @@ data <- data %>%
 #View(data)
 #summary(data)
 
+#since our y var Outcome is just a categorization of Closure.Description, we want to remove this from our data frame and only 
+#use Outcome instead.
+
+data <- data %>%
+  select(-Closure.Description)
+
+#confirm it worked
+#head(data)
 
 #Replace NA's in Race.Type, Sex.Type, National.Origin.Type and Religion.Type into a new column called 
 #"Unknown"
+
+#----------AI USAGE: Gemini helped with the code to clean this because there were issues with converting between string/factor
+#and removing the na's ---------------------
+
 columns_to_clean_na <- c(
   "Race.Type",
   "Sex.Type",
@@ -106,7 +120,6 @@ data <- data %>%
           NULL = "NA",  # Recode the string "NA" to NA
           NULL = " "    # Recode a single space " " to NA
         ) %>%
-        # NOW, fct_explicit_na() will find those real NAs
         fct_explicit_na(na_level = "Unapplicable")
     )
   )
@@ -120,10 +133,46 @@ data <- data %>%
 #View(na_processing_rows)
 
 #these 5 have a Date.Closed, but no Date.Opened. Since there are only 5, we are just going to drop them.
-data <- data %>%
+
+model_data <- data %>%
   filter(!is.na(Processing.Days))
-#summary(data)
 
-#write to new RDS to be able to import into modeling file
-saveRDS(data, file = "clean_data.rds")
+#----------------creating training and testing data so it is consistent/reproducible across all models-------------------
 
+# Setting the seed
+RNGkind(sample.kind = "default")
+set.seed(2025)
+
+# Creating a vector of randomly selected rows that will go into training data set 
+train.idx <- sample(x = 1:nrow(model_data), 0.7*nrow(model_data))
+
+# Split data into train/test
+train.df <- model_data[train.idx, ]
+#for testing data, we can keep every x var. This will help us be able to identify patterns 
+#with our predictions, for example, to see if there is a trend overtime
+test.df <- model_data[-train.idx, ] 
+
+
+#by editing the training dataset below, we can use the ~ . notation when creating models.
+#this should make it easier to reproduce and make sure across files we are using the same variables
+
+#for predictive models, we want to take away these three variables because these are results of 
+#the judge's decisions. Since we want to screen new cases and predict the outcome BEFORE they file and go 
+#through the courts, we would not have these columns.
+
+train_predictive <- train.df %>%
+  select(
+    -Date.Opened,         
+    -Date.Closed,  
+    #for the four columns below, we have a .Type column corresponding to it. It is redundant to have
+    #both in.
+    -Race,  
+    -Sex,          
+    -National.Origin, 
+    -Religion,
+    -Not.Timely,  #discussed in detail in interpretations, due to nature of data. A ton of not timely cases succeeded, likely 
+    #because these were extreme circumstances. regular not timely cases likely don't get filed or get rejected before filing.
+    -Processing.Days,
+    -Not.Jurisdictional,
+    -Fiscal.Year #this is when it closes, so this is unknown
+  )
