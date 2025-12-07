@@ -46,8 +46,8 @@ ggplot(data = model_data) +
 # Visualizing Y variable (Outcome) over Not.Timely cases 
 ggplot(data = model_data) + 
   geom_bar(aes(x = Not.Timely, fill = Outcome), position ='fill', binwidth = 75) +
-  labs(x = "Timely Case", y = "Proportion", caption = "Note: Not timely cases indicate the case was not recieved within 300 days of the incident") + 
-  ggtitle("Case Outcomes over Timely Cases") + 
+  labs(x = "NOT Timely Case", y = "Proportion", caption = "Note: Not timely cases indicate the case was not recieved within 300 days of the incident") + 
+  ggtitle("Case Outcomes over Not Timely Cases") + 
   scale_fill_brewer("Case \nOutcome", palette = "Paired") + 
   theme_clean
 
