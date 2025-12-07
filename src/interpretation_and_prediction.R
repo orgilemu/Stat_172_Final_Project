@@ -147,15 +147,66 @@ final_descriptive_glm <- logistf(Outcome_bin ~ Processor + Housing +
 # Wald test = 8469.497 on 33 df, p = 0
 
 #------------------------------INTERPRETATIONS-------------------------------------------
+
+#the model as a whole is significant - both likelihood and wald give it a p val of 0.
+
 #where you file your case matters - 
 #all else held constant, filing a claim locally has odds of achieving a positive outcome over 4 times greater than those filed 
 #at the EEOC (federal level). We are 95% confident that the true change in odds is between a factor of 3.1 and 5.4.
 
-#exp(1.40113351)
-#exp(1.13673099)
-#exp(1.68019603)
+# housing cases seem to be successful, so we say you should file -
+#all else held constant, the odds of a positive outcome for claims filed for housing complaints are 3.9 times higher than 
+#non-housing claims. We are 95% confident that the true change in odds is between a factor of 3.5 and 4.3. 
+
+#race-based discrimination cases are not successful
+#all else held constant, the odds of a positive outcome for claims based on race are between 
+#24-57% less than non-race discrimination cases. Race type of asian and pacific islander seems to have the 
+#least difference in odds out of all race types, at 24% less.
+
+#marital status claims are not successful -
+#all else held constant, the odds of a positive outcome for complaints on the basis of marital status are 
+#77% less than non marital status based claims. We are 95% confident that the true value is between 
+#52% and 99% less.
+
+#disability cases are successful - 
+#all else held constant, the odds for a positive outcome for 
+#claims filed on the basis of the complainant's disability are 20% more than non-disability. We are 95%
+#confident that the true value is between 10% and 31% more.
+
+#age cases are not successful -
+#all else held constant, the odds for a positive outcome for 
+#claims filed on the basis of the complainant's age are 25% less than non-age based claims. We are 95%
+#confident that the true value is between 15% and 33% less.
+
+#pregnancy cases are successful -
+#all else held constant, the odds for a positive outcome for 
+#claims filed on the basis of the complainant's pregnancy are 46% more than non-pregnancy based claims. We are 95%
+#confident that the true value is between 20% and 78% more.
+
+#the odds of a positive outcome for complaints filed based on creed, color, credit and sexual orientation are not significantly 
+#different than not filing on those basis.
 
 
-#claims filed 
+#public accommodation cases are not successful -
+#all else held constant, the odds for a positive outcome for 
+#complaints associated with public accommodations (public services and buildings) 
+#are 54% less than non-public accomodation based claims. We are 95%
+#confident that the true value is between 47% and 60% less.
 
 
+#education cases are not successful (but a very big range)-
+#all else held constant, the odds for a positive outcome for 
+#complaints associated with education are 54% less than non-education based claims. We are 95%
+#confident that the true value is between 4% and 49% less.
+
+
+#not much success in filing outside of catholic, jewish, muslim, protestant, or 7th day adventist - 
+#all else held constant, the only religion type that has a statistically significant difference in odds
+#of a positive outcome compared to not filing for religion based discrimination is type "other". The odds of a positive outcome
+#for religion types that are NOT catholic, jewish, muslim, protestant, or 7th day adventist are 61% less than 
+#non-religion based cases. We are 95% confident that the true value is between 47% and 72% less.
+
+#all else held constant, the only two national origin types that have a statistically significant 
+#difference in odds of a positive outcome compared to not filing for national origin based discrimination
+#are types "Mexican" and "Hispanic". The odds for these both are around 36% less than not filing for national origin based discrimination. 
+#we are 95% confident that the true value is between 11% and 55% less.
