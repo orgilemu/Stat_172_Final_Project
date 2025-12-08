@@ -402,7 +402,7 @@ plot_sex <- ggplot(sex_data, aes(x = OddsRatio, y = Gender, color = Type)) +
     title = "Gender Outcomes in Discrimination Cases",
     subtitle = "Odds Ratios relative to Baseline (Cases where Sex was not a factor)",
     caption = "Baseline: 'Unapplicable' (Cases filed on other bases like Race or Housing)",
-    x = "Odds Ratio ( > 1 = Higher Chance of Success)",
+    x = "Odds Ratio ( > 1 = Higher Odds of Success)",
     y = ""
   ) +
   
@@ -416,3 +416,51 @@ plot_sex <- ggplot(sex_data, aes(x = OddsRatio, y = Gender, color = Type)) +
   )
 
 print(plot_sex)
+
+
+race_data <- data.frame(
+  Race = c("American Indian", "White", "Black", "Other", "Asian / Pacific Islander"),
+  
+  OddsRatio = c(0.43, 0.52, 0.58, 0.75, 0.76), 
+  
+  LowerCI = c(0.21, 0.39, 0.51, 0.60, 0.48),   
+  
+  UpperCI = c(0.81, 0.69, 0.66, 0.93, 1.14),   
+  
+  # Significant? (Based on p < 0.05 in output)
+  # Asian was p=0.18 (No), others were p < 0.05 (Yes)
+  Significant = c("Yes", "Yes", "Yes", "Yes", "No") 
+)
+
+# --- PLOT FOR RACE ------
+plot_race <- ggplot(race_data, aes(x = OddsRatio, y = reorder(Race, OddsRatio), color = Significant)) +
+  
+  # Vertical line at 1.0 (Neutral Baseline)
+  geom_vline(xintercept = 1, linetype = "dashed", color = "black") +
+  
+  # Error Bars (The Confidence Interval)
+  geom_errorbarh(aes(xmin = LowerCI, xmax = UpperCI), height = 0.2, size = 1) +
+  
+  # The Point Estimate
+  geom_point(size = 5) +
+  
+  # color-blind friendly color scheme
+  scale_color_brewer(palette = "Set1") +
+  
+  # Labels
+  labs(
+    title = "Race Outcomes in Discrimination Cases",
+    subtitle = "Odds Ratios relative to Non-Race Claims (Unapplicable)",
+    caption = "Note: 'Asian / Pacific Islander' interval crosses 1.0, making the result inconclusive.",
+    x = "Odds Ratio ( < 1 indicates lower odds of success)",
+    y = "Race Type"
+  ) +
+  
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    legend.position = "none"
+  )
+
+# Print
+print(plot_race)
