@@ -1,12 +1,13 @@
 # Credit to https://corybrunson.github.io/ggalluvial/
-# Credit to ChatGBT for help with plot code/errors 
-
+# Credit to ChatGPT for help with plot code/errors 
+rm(list = ls())
 library(ggplot2)
 library(ggalluvial)
 library(dplyr)
 
-# read in data 
-model_data <- readRDS("clean_data.rds")
+#source clean data
+source("src/data_exploration_and_cleaning.R")
+
 
 # Theme consistency 
 theme_clean <- theme_minimal(base_size = 12) +
