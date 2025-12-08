@@ -53,9 +53,9 @@ all
 
 4. Run `src/random_forest.R` to reproduce random forest results and evaluation.
   *  
-6. Run `hammock_charts.R` to reproduce hammock chart visualizations.
+6. Run `src/hammock_plots.R` to reproduce hammock chart visualizations.
   *  Hammock charts
-  *  
+
 
 ## References
 State of Iowa, (2023). Closed Discrimination Complaint Cases in Iowa, https://catalog.data.gov/dataset/closed-discrimination-complaint-cases-in-iowa.
