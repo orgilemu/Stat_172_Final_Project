@@ -44,12 +44,21 @@ To fully reproduce the analysis and results, run the scripts in the following or
 all
 
 1. Run `src/data_exploration_and_cleaning.R` to clean the raw data and create the binary outcome `Outcome_bin`.
-  *  raw/Closed_Discrimination_Complaint_Cases_in_Iowa.csv
 
-2. Run `src/variable_exploration.R` to reproduce to explore variables before any modeling to see what kind of relationships might exist in this data.
-  *  plot goes here
+2. Run `src/variable_exploration.R` to reproduce to explore variables to see what kind of relationships exists in this data.
+  *  plots/Case_Outcomes_over_Processing_Time.png
+  *  plots/Case_Outcomes_over_Time.png
+  *  plots/Case_Outcomes_over_Timely_Cases.png
+  *  plots/Favorable_Outcome_Rates_by_Complaint_Profile.png
+  *  plots/Favorable_Outcome_Rates_by_Race_Type.png
+  *  plots/Favorable_Outcomes_Rates_Vary_by_Complaints_Basis.png
+  *  plots/Favorable_Outcomes_Rates_Vary_by_Processing_Agency.png
+  *  plots/Favorable_Outcomes_by_Demographic_Basis.png
+  *  plots/Favorable_Outcomes_tend_to_have_shorter_processing_time.png
+  
+  
 3. Run `src/Lasso & Ridge.R` to reproduce logistic regression results (MLE, lasso, ridge) and ROC comparison.
-  *  ROC curve 
+  *  
 
 4. Run `src/random_forest.R` to reproduce random forest results and evaluation.
   *  
