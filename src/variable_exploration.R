@@ -109,7 +109,7 @@ print(plot2)
 # ---Outcome Rates by Complaint Demographics ---
 
 demo_data <- model_data %>%
-  select(Outcome, Race, Disability, Age, Sex, National.Origin, Religion) %>%
+  select(Outcome, Race, Disability, Age, Sex, National.Origin, Religion, Pregnancy) %>%
   pivot_longer(
     cols = -Outcome,
     names_to = "Demographic.Basis",
