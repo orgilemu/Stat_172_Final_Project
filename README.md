@@ -31,7 +31,12 @@ install.packages(c("tidyverse","pROC", "glmnet", "lubridate", "dplyr",
 
 
 ## Data
+The dataset we used in this project is publicly available through the State of Iowa's Open Data Portal:
 
+State of Iowa, (2023). Closed Discrimination Complaint Cases in Iowa, https://catalog.data.gov/dataset/closed-discrimination-complaint-cases-in-iowa.
+
+This data can be also found in the following sub-directories:
+`raw/Closed_Discrimination_Complaint_Cases_in_Iowa.csv`
 
 ## Reproduce
 
