@@ -1,4 +1,5 @@
-# Credit to ....
+# Credit to https://corybrunson.github.io/ggalluvial/
+# Credit to ChatGBT for help with plot code/errors 
 
 library(ggplot2)
 library(ggalluvial)
@@ -19,10 +20,11 @@ theme_clean <- theme_minimal(base_size = 12) +
   )
 
 # Processor to Outcome 
+# create data frame, filtering out "Other
 df_proc <- model_data %>%
   filter(Processor != "Other") %>% 
   count(Processor, Outcome)
-
+# create hammock plot
 ggplot(df_proc,
        aes(axis1 = Processor,
            axis2 = Outcome,
@@ -37,6 +39,7 @@ ggplot(df_proc,
   theme_clean
 
 # Race Type to Outcome 
+# create data frame, filtering out "Other", "Unknown" and "Unapplicable"
 df_race <- model_data %>%
   filter(!Race.Type %in% c("Other", "Unknown", "Unapplicable", "")) %>% 
   count(Race.Type, Outcome)
@@ -55,6 +58,7 @@ ggplot(df_race,
   theme_clean
 
 # Discrimination to Outcome 
+# Create dataframe 
 df_basis <- model_data %>%
   select(Outcome,
          Housing, Employment, Public.Accommodations, Education, Credit,
@@ -73,7 +77,7 @@ df_basis <- model_data %>%
     Basis = str_replace_all(Basis, "\\.", " "),
     Basis = fct_reorder(Basis, n, .fun = sum, .desc = TRUE)
   )
-
+# make hammock plot
 ggplot(df_basis,
        aes(axis1 = Basis,
            axis2 = Outcome,
