@@ -6,6 +6,13 @@ date: "12/08/25"
 output: 
 ---
 
+---
+title: "Reproducing Results from A Hybrid Approach to Targeting Social Assistance"
+author: "Lendie Follett and Heath Henderson"
+date: "12/28/2021"
+output: html_document
+---
+
 ## Introduction
 This repository contains the code and data required to reproduce the results found in "Closed Discrimination Complaint Cases in Iowa". Our objective is to understand key factors of discrimination cases, and develop a predictive model to inform victims of the possibilities of winning their case by using...
 
