@@ -58,12 +58,12 @@ all
   
   
 3. Run `src/Lasso & Ridge.R` to reproduce logistic regression results (MLE, lasso, ridge) and ROC comparison.
-  *  
+  *  plots/ROC_curve.png
 
 4. Run `src/random_forest.R` to reproduce random forest results and evaluation.
-  *  
+  *  plots/Random_forest.png
 6. Run `src/hammock_plots.R` to reproduce hammock chart visualizations.
-  *  Hammock charts
+  *  plots/Discrimination_Basis_To_Outcome_Hammock
 
 
 ## References
