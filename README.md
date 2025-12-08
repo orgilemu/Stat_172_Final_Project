@@ -33,8 +33,9 @@ To fully reproduce the analysis and results, run the scripts in the following or
 all
 
 1. Run `src/data_exploration_and_cleaning.R` to clean the raw data and create the binary outcome `Outcome_bin`.
+   * this is sourced in all of the following files, so you do not *need* to run it on its own. 
 
-2. Run `src/variable_exploration.R` to reproduce to explore variables to see what kind of relationships exists in this data.
+3. Run `src/variable_exploration.R` to reproduce to explore variables to see what kind of relationships exists in this data.
   *  plots/Case_Outcomes_over_Processing_Time.png
   *  plots/Case_Outcomes_over_Time.png
   *  plots/Case_Outcomes_over_Timely_Cases.png
