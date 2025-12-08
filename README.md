@@ -40,18 +40,22 @@ This data can be also found in the following sub-directories:
 
 ## Reproduce
 
+To fully reproduce the analysis and results, run the scripts in the following order. 
+all
+
 1. Run `src/data_exploration_and_cleaning.R` to clean the raw data and create the binary outcome `Outcome_bin`.
   *  raw/Closed_Discrimination_Complaint_Cases_in_Iowa.csv
 
 2. Run `src/variable_exploration.R` to reproduce to explore variables before any modeling to see what kind of relationships might exist in this data.
-
+  *  plot goes here
 3. Run `src/Lasso & Ridge.R` to reproduce logistic regression results (MLE, lasso, ridge) and ROC comparison.
-
+  *  ROC curve 
 
 4. Run `src/random_forest.R` to reproduce random forest results and evaluation.
-
+  *  
 6. Run `hammock_charts.R` to reproduce hammock chart visualizations.
-
+  *  Hammock charts
+  *  
 
 ## References
 State of Iowa, (2023). Closed Discrimination Complaint Cases in Iowa, https://catalog.data.gov/dataset/closed-discrimination-complaint-cases-in-iowa.
