@@ -1,9 +1,4 @@
-| Field   | Value                                                         |
-|---------|---------------------------------------------------------------|
-| **Title**   | Analysis of Discrimination Complaint Cases in Iowa |
-| **Authors** | Kendall Starcevich, Olivia Soppa, & Munkh-Orgil Tumurchudur |
-| **Date**    | 12/08/25                                                  |
-| **Output**  | *(not specified)*                                         |
+                                  |
 ---
 title: "Analysis of Discrimination Complaint Cases in Iowa"
 authors: "Kendall Starcevich, Olivia Soppa, & Munkh-Orgil Tumurchudur"
